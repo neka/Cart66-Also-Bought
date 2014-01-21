@@ -15,7 +15,7 @@
  * Plugin Name: Cart66 Also Bought
  * Plugin URI:  http://kaneandre.ws
  * Description: Increase sales by showing relevant products that were bought with previous orders.
- * Version:     1.0.0
+ * Version:     1.0.1
  * Author:      Kane Andrews
  * Author URI:  http://kaneandre.ws
  * Text Domain: plugin-name-locale

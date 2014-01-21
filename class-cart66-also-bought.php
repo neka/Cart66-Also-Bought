@@ -12,13 +12,13 @@
 class cart66AlsoBought {
 
 	/**
-	 * Plugin version, used for cache-busting of style and script file references.
+	 * Plugin version.
 	 *
 	 * @since   1.0.0
 	 *
 	 * @var     string
 	 */
-	protected $version = '1.0.0';
+	protected $version = '1.0.1';
 
 	/**
 	 * Unique identifier
@@ -77,12 +77,26 @@ class cart66AlsoBought {
 	 */
 	public static function get_instance() {
 
-		// If the single instance hasn't been set, set it now.
-		if ( null == self::$instance ) {
-			self::$instance = new self;
-		}
+		//	Check if the Cart66 or Cart66 Lite plugin is installed
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		if ((is_plugin_active('cart66-lite/cart66.php')) || (is_plugin_active('cart66/cart66.php'))) {
 
-		return self::$instance;
+		// If the single instance hasn't been set, set it now.
+			if ( null == self::$instance ) {
+				self::$instance = new self;
+			}
+
+			return self::$instance;
+
+		} else {
+
+			function admin_notice_message(){    
+				echo '<div class="updated"><p>You need the Cart66 plugin to use the <i>Cart66 Also Bought</i> addon.</p></div>';
+			}
+
+			add_action('admin_notices', 'admin_notice_message');
+
+		}
 	}
 
 	/**
@@ -111,14 +125,10 @@ class cart66AlsoBought {
 	 * @since    1.0.0
 	 */
 	public function load_plugin_textdomain() {
-		/*
-		$domain = $this->plugin_slug;
-		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 
-		load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
-		load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
-		*/
 	}
+
+	
 
 	/**
 	 * Register and enqueue admin-specific style sheet.

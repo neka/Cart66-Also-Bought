@@ -2,10 +2,10 @@
 
 Contributors: n3k4
 Donate link: http://kaneandre.ws/
-Tags: cart66, ecommerce, shop
+Tags: cart66, ecommerce, shop, seo
 Requires at least: 3.5.1
-Tested up to: 3.6
-Stable tag: 1.0.0
+Tested up to: 3.8
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,7 +15,7 @@ Help increase sales by showing relevant items that were also bought by previous 
 
 This plugin will lookup previous orders that contain the current item and return the other items that were included with the order. Including relevant items like this will help increase sales as well as adding more link depth to your site. 
 
-Obviously, you will need the Cart66 Shop plugin to use this. If you try to use it without it then good luck with that. You can change the amount of items shown in the settings page that is a sub-menu of the Cart66 settings. Also, you can edit the layout of your loop template in the views/template.php file.
+You will need the Cart66 Shop plugin to use this. You can change the amount of items shown in the settings page that is a sub-menu of the Cart66 settings. Also, you can edit the layout of your loop template in the views/template.php file.
 
 == Installation ==
 
@@ -35,6 +35,10 @@ Yes.
 1. An example of the plugin being used after formatting to fit the existing style of the site.
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Fail gracefully if Cart66 or Cart66 lite is not installed.
 
 = 1.0 =
 
