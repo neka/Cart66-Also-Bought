@@ -166,13 +166,15 @@ class cart66AlsoBought {
 	 */
 	public function add_plugin_admin_menu() {
 
-		add_options_page(
+		add_submenu_page(
+			'admin.php',
 			__( 'Cart66 Also Bought', $this->plugin_slug ),
 			__( 'Cart66 Also Bought', $this->plugin_slug ),
 			'manage_options',
 			$this->plugin_slug,
 			array( $this, 'display_plugin_admin_page' )
 			);
+
 		$this->plugin_screen_hook_suffix = add_submenu_page('cart66_admin', __('Also Bought', 'cart66'), __('Also Bought', 'cart66'), Cart66Common::getPageRoles('orders'), $this->plugin_slug, array( $this, 'display_plugin_admin_page' ));
 		register_setting( 'also_bought', 'also_bought', 'intval' );
 
