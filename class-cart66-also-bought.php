@@ -211,7 +211,7 @@ function also_bought() {
 	$sum = substr($sum, 0, -2);
 
 	//Find all unique items in the same orders
-	$otheritems = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT item_number FROM ".$wpdb->prefix."cart66_order_items WHERE order_id IN (%s)", $sum ) );	
+	$otheritems = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT item_number FROM ".$wpdb->prefix."cart66_order_items WHERE order_id IN (".$sum.")", $sum ) );	
 	$stack = array();
 
 	//Get info of each product from item number, including corresponding post. 
@@ -224,7 +224,6 @@ function also_bought() {
 		}
 		unset($postit);
 	}
-
 	//Remove original item from array
 	if(($key = array_search($post->ID, $stack)) !== false) {
 		unset($stack[$key]);
