@@ -76,11 +76,8 @@ class cart66AlsoBought {
 	 * @return    object    A single instance of this class.
 	 */
 	public static function get_instance() {
-
-		//	Check if the Cart66 or Cart66 Lite plugin is installed
 		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		if ((is_plugin_active('cart66-lite/cart66.php')) || (is_plugin_active('cart66/cart66.php'))) {
-
 		// If the single instance hasn't been set, set it now.
 			if ( null == self::$instance ) {
 				self::$instance = new self;
@@ -166,15 +163,13 @@ class cart66AlsoBought {
 	 */
 	public function add_plugin_admin_menu() {
 
-		add_submenu_page(
-			'admin.php',
+		add_options_page(
 			__( 'Cart66 Also Bought', $this->plugin_slug ),
 			__( 'Cart66 Also Bought', $this->plugin_slug ),
 			'manage_options',
 			$this->plugin_slug,
 			array( $this, 'display_plugin_admin_page' )
 			);
-
 		$this->plugin_screen_hook_suffix = add_submenu_page('cart66_admin', __('Also Bought', 'cart66'), __('Also Bought', 'cart66'), Cart66Common::getPageRoles('orders'), $this->plugin_slug, array( $this, 'display_plugin_admin_page' ));
 		register_setting( 'also_bought', 'also_bought', 'intval' );
 
@@ -204,7 +199,7 @@ function also_bought() {
 	$item_number = number_format( str_replace('"', '', $more[0]) );
 
 	//Find all order IDs that contain the product
-	$orderids=$wpdb->get_col( $wpdb->prepare( "SELECT order_id FROM ".$wpdb->prefix."cart66_order_items WHERE item_number = %d", $item_number ) );
+	$orderids=$wpdb->get_col( $wpdb->prepare( "SELECT order_id FROM $wpdb->cart66_order_items WHERE item_number = %d", $item_number ) );
 
 	//Create string of all order IDs
 	foreach ( $orderids as $order ) 
@@ -216,14 +211,14 @@ function also_bought() {
 	$sum = substr($sum, 0, -2);
 
 	//Find all unique items in the same orders
-	$otheritems = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT item_number FROM ".$wpdb->prefix."cart66_order_items WHERE order_id IN (".$sum.")", $sum ) );	
+	$otheritems = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT item_number FROM $wpdb->cart66_order_items WHERE order_id IN (%s)", $sum ) );	
 	$stack = array();
 
 	//Get info of each product from item number, including corresponding post. 
 	foreach ( $otheritems as $item ) 
 	{
 		$stringtofind = 'add_to_cart item="'.$item;
-		$thepost = $wpdb->get_row("SELECT ID FROM $wpdb->posts WHERE post_content LIKE '%".$stringtofind."%' AND post_status = 'publish'");
+		$thepost = $wpdb->get_row( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_content LIKE '%%s%' AND post_status = 'publish'", $stringtofind ) );
 		if ($thepost) {
 			array_push($stack, $thepost->ID);
 		}
