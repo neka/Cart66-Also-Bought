@@ -199,7 +199,7 @@ function also_bought() {
 	$item_number = number_format( str_replace('"', '', $more[0]) );
 
 	//Find all order IDs that contain the product
-	$orderids=$wpdb->get_col( $wpdb->prepare( "SELECT order_id FROM $wpdb->cart66_order_items WHERE item_number = %d", $item_number ) );
+	$orderids=$wpdb->get_col( $wpdb->prepare( "SELECT order_id FROM ".$wpdb->prefix."cart66_order_items WHERE item_number = %d", $item_number ) );
 
 	//Create string of all order IDs
 	foreach ( $orderids as $order ) 
@@ -211,14 +211,14 @@ function also_bought() {
 	$sum = substr($sum, 0, -2);
 
 	//Find all unique items in the same orders
-	$otheritems = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT item_number FROM $wpdb->cart66_order_items WHERE order_id IN (%s)", $sum ) );	
+	$otheritems = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT item_number FROM ".$wpdb->prefix."cart66_order_items WHERE order_id IN (%s)", $sum ) );	
 	$stack = array();
 
 	//Get info of each product from item number, including corresponding post. 
 	foreach ( $otheritems as $item ) 
 	{
 		$stringtofind = 'add_to_cart item="'.$item;
-		$thepost = $wpdb->get_row( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_content LIKE '%%s%' AND post_status = 'publish'", $stringtofind ) );
+		$thepost = $wpdb->get_row("SELECT ID FROM $wpdb->posts WHERE post_content LIKE '%%$stringtofind%%' AND post_status = 'publish'");
 		if ($thepost) {
 			array_push($stack, $thepost->ID);
 		}
