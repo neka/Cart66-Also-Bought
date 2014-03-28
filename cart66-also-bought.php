@@ -1,20 +1,20 @@
 <?php
 /**
- * Cart66 Best Selling Products.
+ * Cart66 Also Bought.
  *
- * Showcase the best selling products on your Cart66 store.
- * 
+ * Help increase sales by showing relevant items
+ * that were also bought by previous customers.
  *
- * @package   cart66BestSellingProducts
+ * @package   cart66AlsoBought
  * @author    Kane Andrews <hello@kaneandre.ws>
  * @license   GPL-2.0+
  * @link      http://kaneandre.ws
  * @copyright 2013 Kane Andrews
  *
  * @wordpress-plugin
- * Plugin Name: Cart66 Best Selling Products
+ * Plugin Name: Cart66 Also Bought
  * Plugin URI:  http://kaneandre.ws
- * Description: Showcase the best selling items over a number of days.
+ * Description: Increase sales by showing relevant products that were bought with previous orders.
  * Version:     1.0.1
  * Author:      Kane Andrews
  * Author URI:  http://kaneandre.ws
@@ -29,10 +29,10 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-require_once( plugin_dir_path( __FILE__ ) . 'class-cart66-best-selling-products.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'class-cart66-also-bought.php' );
 
 // Register hooks that are fired when the plugin is activated, deactivated, and uninstalled, respectively.
-register_activation_hook( __FILE__, array( 'cart66BestSellingProducts', 'activate' ) );
-register_deactivation_hook( __FILE__, array( 'cart66BestSellingProducts', 'deactivate' ) );
+register_activation_hook( __FILE__, array( 'cart66AlsoBought', 'activate' ) );
+register_deactivation_hook( __FILE__, array( 'cart66AlsoBought', 'deactivate' ) );
 
-cart66BestSellingProducts::get_instance();
+cart66AlsoBought::get_instance();
