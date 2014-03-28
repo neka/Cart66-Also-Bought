@@ -1,15 +1,15 @@
 <?php
 /**
- * Cart66 Also Bought.
+ * Cart66 Best Selling Products
  *
- * @package   cart66AlsoBought
+ * @package   cart66BestSellingProducts
  * @author    Kane Andrews <hello@kaneandre.ws>
  * @license   GPL-2.0+
  * @link      http://kaneandre.ws
  * @copyright 2013 Kane Andrews
  */
 
-class cart66AlsoBought {
+class cart66BestSellingProducts {
 
 	/**
 	 * Plugin version.
@@ -18,7 +18,7 @@ class cart66AlsoBought {
 	 *
 	 * @var     string
 	 */
-	protected $version = '1.0.1';
+	protected $version = '1.0.0';
 
 	/**
 	 * Unique identifier
@@ -27,7 +27,7 @@ class cart66AlsoBought {
 	 *
 	 * @var      string
 	 */
-	protected $plugin_slug = 'cart66-also-bought';
+	protected $plugin_slug = 'cart66-best-selling-products';
 
 	/**
 	 * Instance of this class.
@@ -70,6 +70,7 @@ class cart66AlsoBought {
 
 	/**
 	 * Return an instance of this class.
+	 * Check that Cart66 is already installed.
 	 *
 	 * @since     1.0.0
 	 *
@@ -153,7 +154,7 @@ class cart66AlsoBought {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/cart66-also-bought.css', __FILE__ ), array(), $this->version );
+		wp_enqueue_style( $this->plugin_slug . '-plugin-styles', plugins_url( 'css/cart66-most-popular.css', __FILE__ ), array(), $this->version );
 	}
 
 	/**
@@ -164,14 +165,14 @@ class cart66AlsoBought {
 	public function add_plugin_admin_menu() {
 
 		add_options_page(
-			__( 'Cart66 Also Bought', $this->plugin_slug ),
-			__( 'Cart66 Also Bought', $this->plugin_slug ),
+			__( 'Cart66 Best Selling Products', $this->plugin_slug ),
+			__( 'Cart66 Best Selling Products', $this->plugin_slug ),
 			'manage_options',
 			$this->plugin_slug,
 			array( $this, 'display_plugin_admin_page' )
 			);
-		$this->plugin_screen_hook_suffix = add_submenu_page('cart66_admin', __('Also Bought', 'cart66'), __('Also Bought', 'cart66'), Cart66Common::getPageRoles('orders'), $this->plugin_slug, array( $this, 'display_plugin_admin_page' ));
-		register_setting( 'also_bought', 'also_bought', 'intval' );
+		$this->plugin_screen_hook_suffix = add_submenu_page('cart66_admin', __('Best Selling Products', 'cart66'), __('Best Selling Products', 'cart66'), Cart66Common::getPageRoles('orders'), $this->plugin_slug, array( $this, 'display_plugin_admin_page' ));
+		register_setting( 'best_selling_products', 'best_selling_products', 'intval' );
 
 	}
 
@@ -185,69 +186,14 @@ class cart66AlsoBought {
 	}
 
 }
+
 /**
  * Main code.
  *
  * @since    1.0.0
  */
-function also_bought() {
+function best_selling_products() {
 
 	global $post, $wpdb;
-	//Get product ID from post content
-	$pieces = explode("add_to_cart item=", $post->post_content);
-	$more = explode("quantity", $pieces[1]);
-	$item_number = number_format( str_replace('"', '', $more[0]) );
-
-	//Find all order IDs that contain the product
-	$orderids=$wpdb->get_col( $wpdb->prepare( "SELECT order_id FROM ".$wpdb->prefix."cart66_order_items WHERE item_number = %d", $item_number ) );
-
-	//Create string of all order IDs
-	foreach ( $orderids as $order ) 
-	{
-		$sum .= $order . ", ";
-	}
-
-	//Trim string for use
-	$sum = substr($sum, 0, -2);
-
-	//Find all unique items in the same orders
-	$otheritems = $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT item_number FROM ".$wpdb->prefix."cart66_order_items WHERE order_id IN (".$sum.")", $sum ) );	
-	$stack = array();
-
-	//Get info of each product from item number, including corresponding post. 
-	foreach ( $otheritems as $item ) 
-	{
-		$stringtofind = 'add_to_cart item="'.$item;
-		$thepost = $wpdb->get_row("SELECT ID FROM $wpdb->posts WHERE post_content LIKE '%%$stringtofind%%' AND post_status = 'publish'");
-		if ($thepost) {
-			array_push($stack, $thepost->ID);
-		}
-		unset($postit);
-	}
-	//Remove original item from array
-	if(($key = array_search($post->ID, $stack)) !== false) {
-		unset($stack[$key]);
-	}
-
-	//Get amount from settings
-	$amount = get_option('also_bought');
-
-	if ($amount > 0) {
-		
-		//Setup query
-		$args=array(
-			'post_type' => 'products',
-			'post_status' => 'publish',
-			'showposts' => $amount,
-			'orderby'=> 'rand',
-			'post__in' => $stack,
-			);
-		$amount_query = new WP_Query($args);
-
-		//Run the loop
-		while ($amount_query->have_posts()) : $amount_query->the_post(); 
-		require( 'views/template.php' );
-		endwhile;
-		wp_reset_query();
-	}
+	
 }
