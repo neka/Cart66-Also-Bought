@@ -18,7 +18,7 @@ class cart66AlsoBought {
 	 *
 	 * @var     string
 	 */
-	protected $version = '1.0.1';
+	protected $version = '1.0.2';
 
 	/**
 	 * Unique identifier
@@ -60,16 +60,10 @@ class cart66AlsoBought {
 		// Add the options page and menu item.
 		add_action( 'admin_menu', array( $this, 'add_plugin_admin_menu' ) );
 
-		// Load admin style sheet and JavaScript.
-		//add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
-
-		// Load public-facing style sheet and JavaScript.
-		//add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
-
 	}
 
 	/**
-	 * Return an instance of this class.
+	 * Return an instance of this class. If Cart66 (either pro or lite edition) is not installed, an error message will show.
 	 *
 	 * @since     1.0.0
 	 *
@@ -94,38 +88,7 @@ class cart66AlsoBought {
 			add_action('admin_notices', 'admin_notice_message');
 
 		}
-	}
-
-	/**
-	 * Fired when the plugin is activated.
-	 *
-	 * @since    1.0.0
-	 *
-	 * @param    boolean    $network_wide    True if WPMU superadmin uses "Network Activate" action, false if WPMU is disabled or plugin is activated on an individual blog.
-	 */
-	public static function activate( $network_wide ) {
-	}
-
-	/**
-	 * Fired when the plugin is deactivated.
-	 *
-	 * @since    1.0.0
-	 *
-	 * @param    boolean    $network_wide    True if WPMU superadmin uses "Network Deactivate" action, false if WPMU is disabled or plugin is deactivated on an individual blog.
-	 */
-	public static function deactivate( $network_wide ) {
-	}
-
-	/**
-	 * Load the plugin text domain for translation.
-	 *
-	 * @since    1.0.0
-	 */
-	public function load_plugin_textdomain() {
-
-	}
-
-	
+	}	
 
 	/**
 	 * Register and enqueue admin-specific style sheet.
@@ -193,14 +156,15 @@ class cart66AlsoBought {
 function also_bought() {
 
 	global $post, $wpdb;
+
 	//Get product ID from post content
 	$pieces = explode("add_to_cart item=", $post->post_content);
 	$more = explode("quantity", $pieces[1]);
-	$item_number = number_format( str_replace('"', '', $more[0]) );
-
+	$item_number = str_replace('"', '', $more[0]);
+	
 	//Find all order IDs that contain the product
-	$orderids=$wpdb->get_col( $wpdb->prepare( "SELECT order_id FROM ".$wpdb->prefix."cart66_order_items WHERE item_number = %d", $item_number ) );
-
+	$orderids = $wpdb->get_col( $wpdb->prepare( "SELECT order_id FROM ".$wpdb->prefix."cart66_order_items WHERE item_number = %d", $item_number ) );
+	
 	//Create string of all order IDs
 	foreach ( $orderids as $order ) 
 	{
@@ -224,12 +188,13 @@ function also_bought() {
 		}
 		unset($postit);
 	}
+
 	//Remove original item from array
 	if(($key = array_search($post->ID, $stack)) !== false) {
 		unset($stack[$key]);
 	}
 
-	//Get amount from settings
+	//Get amount to display from settings
 	$amount = get_option('also_bought');
 
 	if ($amount > 0) {
@@ -242,11 +207,12 @@ function also_bought() {
 			'orderby'=> 'rand',
 			'post__in' => $stack,
 			);
+
 		$amount_query = new WP_Query($args);
 
-		//Run the loop
+		//Run the loop and include the custom template
 		while ($amount_query->have_posts()) : $amount_query->the_post(); 
-		require( 'views/template.php' );
+			require( 'views/template.php' );
 		endwhile;
 		wp_reset_query();
 	}
